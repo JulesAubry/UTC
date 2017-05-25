@@ -1,0 +1,4 @@
+You cannot directly pull from git gui, but given than a pull is a fetch followed by a merge, 
+you can fetch the remote (in the remote menu and fetch from),
+ and then merge the remote branch into yours 
+(Merge menu and Local merge, select tracking branch).

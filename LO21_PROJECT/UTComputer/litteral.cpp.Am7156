@@ -1,0 +1,1077 @@
+#include "litteral.h"
+#include "computer.h"
+#include "utcomputerexception.h"
+
+/*Transforme l'arg en chaine de caractère. Regarde si après le . il y a un 0.
+Permet donc de savoir si le double peut être considéré comme un int.*/
+bool isInt(double arg) {
+    ostringstream oss;
+    oss << arg;
+    string s = oss.str();
+    regex reg = regex("[[:digit:]]+");
+    bool test = regex_match(s,reg);
+    return test;
+}
+/*******************************************************************/
+/****************************** TOSTRING *************************/
+/*******************************************************************/
+
+QString  Entier::toString() const {
+    return QString::number(value);
+}
+QString  Rationnel::toString() const {
+    QString s; s += QString::number(numerateur); s += QString("/"); s += QString::number(denominateur);
+    return s;
+}
+QString  Reel::toString() const {
+    return QString::number(value);
+}
+QString  Complexe::toString() const {
+    QString s; s += getReelle().toString(); s += QString("$"); s += getImaginaire().toString();
+    return s;
+}
+/*******************************************************************/
+/********************** OPERATIONS A PARTIR D'UN ENTIER ************/
+/*******************************************************************/
+
+
+/*** + ***/
+Litteral& Entier::operator+(const Litteral & l) const {
+    return l + *this;
+}
+Litteral& Entier::operator+(const Entier& l) const {
+    return LitteralManager::getInstance().addEntier(getValue()+l.getValue());
+}
+Litteral& Entier::operator+(const Reel & l)  const {
+    return LitteralManager::getInstance().addReel(getValue()+l.getValue());
+}
+Litteral& Entier::operator+(const Rationnel & l) const {
+    QString s;
+    s = QString("%1/%2").arg(getValue()*l.getDenominator()+l.getNumerator()).arg(l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Entier::operator+(const Complexe & l)  const {
+    return LitteralManager::getInstance().addComplexe((l.getReelle()+*this),*l.getImaginaire().clone());
+}
+
+
+/*** - ***/
+Litteral& Entier::operator-(const Litteral & l) const {
+    return l - *this;
+}
+Litteral& Entier::operator-(const Entier& l) const {
+    return LitteralManager::getInstance().addEntier(l.getValue()-getValue());
+}
+Litteral& Entier::operator-(const Reel & l)  const {
+    return LitteralManager::getInstance().addReel(l.getValue()-getValue());
+}
+Litteral& Entier::operator-(const Rationnel & l) const {
+    QString s;
+    s = QString("%1/%2").arg(l.getNumerator()-getValue()*l.getDenominator()).arg(l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Entier::operator-(const Complexe & l)  const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()-*this,*l.getImaginaire().clone());
+}
+
+
+
+/*** * ***/
+Litteral& Entier::operator*(const Litteral & l) const {
+    return l * (*this);
+}
+Litteral& Entier::operator*(const Entier& l) const {
+    return LitteralManager::getInstance().addEntier(l.getValue()*getValue());
+}
+Litteral& Entier::operator*(const Reel& l) const {
+    return LitteralManager::getInstance().addReel(l.getValue()*getValue());
+}
+Litteral& Entier::operator*(const Rationnel& l) const {
+    double tmp = getValue()*l.getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que rationnel comme prévu
+    QString s;
+    s = QString("%1/%2").arg(getValue()*l.getNumerator()).arg(l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Entier::operator*(const Complexe& l) const {
+    return LitteralManager::getInstance().addComplexe(*this*l.getReelle(),l.getImaginaire()*(*this));
+}
+
+/*** DIVISION ***/
+Litteral& Entier::operator/(const Litteral & l) const {
+    try {
+        return l / (*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Entier::operator/(const Entier& l) const {
+    if (getValue() == 0) throw UTComputerException("Il est impossible de diviser par zero.");
+    double res = static_cast<double>(l.getValue())/getValue();
+    if(isInt(res))
+       return LitteralManager::getInstance().addEntier(l.getValue()/getValue());
+    return LitteralManager::getInstance().addReel(res);
+}
+Litteral& Entier::operator/(const Reel& l) const {
+    if (getValue() == 0) throw UTComputerException("Il est impossible de diviser par zero.");
+    return LitteralManager::getInstance().addReel(l.getValue()/getValue());
+}
+Litteral& Entier::operator/(const Rationnel& l) const {
+    if (getValue() == 0) throw UTComputerException("Il est impossible de diviser par zero.");
+    double tmp = l.getValue()/getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que rationnel comme prévu
+    QString s;
+    s = QString("%1/%2").arg(l.getNumerator()).arg(l.getDenominator()*getValue());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Entier::operator/(const Complexe& l) const {
+    Litteral& a = l.getReelle();
+    Litteral& b = l.getImaginaire();
+    Litteral& reelle = (a*(*this))/((*this)*(*this));
+    Litteral& imaginaire = b*(*this)/(*this)*(*this);
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+
+/*** DIVISION ENTIERE ***/
+
+Litteral& Entier::operatorDivEntiere(const Litteral& l) const{
+    try {
+        return l.operatorDivEntiere(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+
+Litteral& Entier::operatorDivEntiere(const Entier& l)  const{
+    return LitteralManager::getInstance().addEntier(l.getValue() / getValue());
+}
+
+Litteral& Entier::operatorDivEntiere(const Reel& l) const{
+    /*if (getValue() == 0) throw UTComputerException("Il est impossible de diviser par zero.");
+    double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un reel et un entier.");
+}
+Litteral& Entier::operatorDivEntiere(const Rationnel& l) const{
+   /* if (getValue() == 0) throw UTComputerException("Il est impossible de diviser par zero.");
+    double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un rationnel et un entier.");
+
+}
+Litteral& Entier::operatorDivEntiere(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un entier.");
+}
+
+/*** MODULO ***/
+Litteral& Entier::operator%(const Litteral& l) const{
+    try {
+        return l%*this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Entier::operator%(const Entier& l)  const{
+    return LitteralManager::getInstance().addEntier(l.getValue() % getValue());
+}
+
+Litteral& Entier::operator%(const Reel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un entier et un reel.");
+
+}
+Litteral& Entier::operator%(const Rationnel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un entier et un rationnel.");
+
+}
+Litteral& Entier::operator%(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un entier.");
+}
+
+/*** OPERATEUR $ ***/
+Litteral& Entier::operator$(const Litteral& l) const{
+    try {
+        return l.operator$(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Entier::operator$(const Entier& l)  const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+
+Litteral& Entier::operator$(const Reel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+
+}
+Litteral& Entier::operator$(const Rationnel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+Litteral& Entier::operator$(const Complexe& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+
+/*** OPERATEUR EGAL ***/
+Entier& Entier::operatorEgale(const Litteral& l) const{
+    try {
+        return l.operatorEgale(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Entier::operatorEgale(const Entier& l)  const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operatorEgale(const Reel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operatorEgale(const Rationnel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operatorEgale(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un entier et un complexe.");
+}
+
+/*** OPERATEUR <= ***/
+Entier& Entier::operator<=(const Litteral& l) const{
+    try {
+        return l <= *this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Entier::operator<=(const Entier& l)  const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operator<=(const Reel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operator<=(const Rationnel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Entier::operator<=(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un entier et un complexe.");
+}
+
+
+
+/*******************************************************************/
+/********************** OPERATIONS A PARTIR D'UN REEL ************/
+/*******************************************************************/
+
+/*** + ***/
+Litteral& Reel::operator+(const Litteral & l) const {
+    return l + *this;
+}
+Litteral& Reel::operator+(const Entier& l) const {
+    return LitteralManager::getInstance().addReel(getValue()+l.getValue());
+}
+Litteral& Reel::operator+(const Reel & l)  const {
+    double tmp = getValue()+l.getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que réél comme prévu
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator+(const Rationnel & l) const {
+    return LitteralManager::getInstance().addReel(getValue()+l.getValue());
+}
+Litteral& Reel::operator+(const Complexe & l)  const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()+*this,*l.getImaginaire().clone());
+}
+
+
+/*** - ***/
+Litteral& Reel::operator-(const Litteral & l) const {
+    return l - *this;
+}
+Litteral& Reel::operator-(const Entier& l) const {
+    return LitteralManager::getInstance().addReel(l.getValue()-getValue());
+}
+Litteral& Reel::operator-(const Reel & l)  const {
+    double tmp = l.getValue() - getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que réél comme prévu
+     return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator-(const Rationnel & l) const {
+    double tmp = l.getValue() - getValue();
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator-(const Complexe & l)  const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()-*this,*l.getImaginaire().clone());
+}
+
+/*** * ***/
+Litteral& Reel::operator*(const Litteral & l) const {
+    return l * *this;
+}
+Litteral& Reel::operator*(const Entier& l) const {
+    return LitteralManager::getInstance().addReel(getValue()*l.getValue());
+}
+Litteral& Reel::operator*(const Reel & l)  const {
+    double tmp = getValue()*l.getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que réél comme prévu
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator*(const Rationnel & l) const {
+    double tmp = getValue()*l.getValue();
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator*(const Complexe & l)  const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()*(*this),l.getImaginaire()*(*this));
+}
+
+/*** / ***/
+Litteral& Reel::operator/(const Litteral & l) const {
+    return l / *this;
+}
+Litteral& Reel::operator/(const Entier& l) const {
+    return LitteralManager::getInstance().addReel(l.getValue()/getValue());
+}
+Litteral& Reel::operator/(const Reel & l)  const {
+    double tmp = l.getValue()/getValue();
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator/(const Rationnel & l) const {
+    double tmp = l.getValue()/getValue();
+    return LitteralManager::getInstance().addReel(tmp);
+}
+Litteral& Reel::operator/(const Complexe& l) const {
+    Litteral& a = l.getReelle();
+    Litteral& b = l.getImaginaire();
+    Litteral& reelle = (a*(*this))/((*this)*(*this));
+    Litteral& imaginaire = b*(*this)/(*this)*(*this);
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+
+
+/*** DIVISION ENTIERE ***/
+
+Litteral& Reel::operatorDivEntiere(const Litteral& l)  const{
+    try {
+        return l.operatorDivEntiere(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+
+Litteral& Reel::operatorDivEntiere(const Entier& l)  const{
+    /*double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un reel et un entier.");
+
+}
+
+Litteral& Reel::operatorDivEntiere(const Reel& l)  const{
+   /* double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre deux reels.");
+
+}
+Litteral& Reel::operatorDivEntiere(const Rationnel& l)  const{
+   /* double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un reel et un rationnel.");
+
+}
+
+Litteral& Reel::operatorDivEntiere(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un reel.");
+
+}
+
+/*** MODULO ***/
+Litteral& Reel::operator%(const Litteral& l) const{
+    try {
+        return l%*this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Reel::operator%(const Entier& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un reel et un entier.");
+}
+
+Litteral& Reel::operator%(const Reel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre deux reels.");
+}
+Litteral& Reel::operator%(const Rationnel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un reel et un rationnel.");
+}
+Litteral& Reel::operator%(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un reel.");
+
+}
+
+/*** OPERATEUR $ ***/
+Litteral& Reel::operator$(const Litteral& l) const{
+    try {
+        return l.operator$(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Reel::operator$(const Entier& l)  const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+
+Litteral& Reel::operator$(const Reel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+
+}
+Litteral& Reel::operator$(const Rationnel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+Litteral& Reel::operator$(const Complexe& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+
+
+
+/*** OPERATEUR EGAL ***/
+Entier& Reel::operatorEgale(const Litteral& l) const{
+    try {
+        return l.operatorEgale(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Reel::operatorEgale(const Entier& l)  const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operatorEgale(const Reel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operatorEgale(const Rationnel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operatorEgale(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un reel et un complexe.");
+}
+
+
+/*** OPERATEUR <= ***/
+Entier& Reel::operator<=(const Litteral& l) const{
+    try {
+        return l <= *this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Reel::operator<=(const Entier& l)  const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operator<=(const Reel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operator<=(const Rationnel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Reel::operator<=(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un reel et un complexe.");
+}
+/*******************************************************************/
+/****************** OPERATIONS A PARTIR D'UN RATIONNEL *************/
+/*******************************************************************/
+
+
+/*** + ***/
+Litteral& Rationnel::operator+(const Litteral & l) const {
+    return l + *this;
+}
+Litteral& Rationnel::operator+(const Entier& l) const {
+    QString s;
+    s = QString("%1/%2").arg(getNumerator()+l.getValue()*getDenominator()).arg(getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+
+Litteral& Rationnel::operator+(const Reel & l)  const {
+    return LitteralManager::getInstance().addReel(getValue()+l.getValue());
+
+}
+Litteral& Rationnel::operator+(const Rationnel & l) const {
+    //si le nouveau dénominateur vaut 1, alors on ajoute un entier
+    double tmp = (getNumerator()*l.getDenominator()+l.getNumerator()*getDenominator())/(getDenominator()*l.getDenominator());
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on fait un rationnel
+    QString s;
+    s = QString("%1/%2").arg(getNumerator()*l.getDenominator()+l.getNumerator()*getDenominator()).arg(getDenominator()*l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator+(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()+*this,*l.getImaginaire().clone());
+}
+
+/*** - ***/
+Litteral& Rationnel::operator-(const Litteral & l) const {
+    return l - *this ;
+}
+Litteral& Rationnel::operator-(const Entier& l) const {
+    QString s;
+    s = QString("%1/%2").arg(l.getValue()*getDenominator()-getNumerator()).arg(getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator-(const Reel & l)  const {
+    double d = getNumerator() / getDenominator();
+    return LitteralManager::getInstance().addReel(l.getValue()-d);
+}
+Litteral& Rationnel::operator-(const Rationnel & l) const {
+    //si le nouveau dénominateur vaut 1, alors on ajoute un entier
+    double tmp = (l.getNumerator()*getDenominator()-getNumerator()*l.getDenominator())/(getDenominator()*l.getDenominator());
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on fait un rationnel
+    QString s;
+    s = QString("%1/%2").arg(-getNumerator()*l.getDenominator()+l.getNumerator()*getDenominator()).arg(getDenominator()*l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator-(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe(*this-l.getReelle(),*l.getImaginaire().clone());
+}
+
+/*** * ***/
+Litteral& Rationnel::operator*(const Litteral & l) const {
+    return l * *this;
+}
+Litteral& Rationnel::operator*(const Entier& l) const {
+    double tmp = l.getValue()*getValue();
+    //Si le double résultant n'a plus de partie décimale, alors on le transforme en entier
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on ajoute en tant que rationnel comme prévu
+    QString s;
+    s = QString("%1/%2").arg(l.getValue()*getNumerator()).arg(getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator*(const Reel & l)  const {
+    return LitteralManager::getInstance().addReel(getValue()*l.getValue());
+
+}
+Litteral& Rationnel::operator*(const Rationnel & l) const {
+    //si le nouveau dénominateur vaut 1, alors on ajoute un entier
+    double tmp = (getNumerator()*l.getNumerator())/(getDenominator()*l.getDenominator());
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    //Sinon on fait un rationnel
+    QString s;
+    s = QString("%1/%2").arg(getNumerator()*l.getNumerator()).arg(getDenominator()*l.getDenominator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator*(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()*(*this),l.getImaginaire()*(*this));
+}
+
+/*** / ***/
+Litteral& Rationnel::operator/(const Litteral & l) const {
+    return l / *this;
+}
+Litteral& Rationnel::operator/(const Entier& l) const {
+    double tmp = l.getValue()/getValue();
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    QString s;
+    s = QString("%1/%2").arg(getNumerator()).arg(getDenominator()*l.getValue());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+Litteral& Rationnel::operator/(const Reel & l)  const {
+    return LitteralManager::getInstance().addReel(l.getValue()/getValue());
+}
+Litteral& Rationnel::operator/(const Rationnel & l) const {
+    //diviser c'est multiplier par l'inverse
+    double tmp = (getNumerator()*l.getDenominator())/(getDenominator()*l.getNumerator());
+    if (isInt(tmp))
+        return LitteralManager::getInstance().addEntier(static_cast<int>(tmp));
+    QString s;
+    s = QString("%1/%2").arg(getNumerator()*l.getDenominator()).arg(getDenominator()*l.getNumerator());
+    return LitteralManager::getInstance().addRationnel(s);
+}
+
+Litteral& Rationnel::operator/(const Complexe& l) const {
+    Litteral& a = l.getReelle();
+    Litteral& b = l.getImaginaire();
+    Litteral& reelle = (a*(*this))/((*this)*(*this));
+    Litteral& imaginaire = b*(*this)/(*this)*(*this);
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+
+
+/*** DIVISION ENTIERE ***/
+
+Litteral& Rationnel::operatorDivEntiere(const Litteral& l)  const {
+    try {
+        return l.operatorDivEntiere(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }}
+
+Litteral& Rationnel::operatorDivEntiere(const Entier& l)  const{
+  /*  double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un rationnel et un entier.");
+
+}
+Litteral& Rationnel::operatorDivEntiere(const Reel& l)  const{
+   /* double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un reel et un rationnel.");
+
+}
+Litteral& Rationnel::operatorDivEntiere(const Rationnel& l)  const{
+  /*  double tmp = l.getValue() / getValue();
+    //on prend la partie entière. floor retourne un double. conversion auto entre double et int.
+    int res = floor(tmp);
+    return LitteralManager::getInstance().addEntier(res);*/
+    throw UTComputerException("Il est impossible d'appliquer DIV entre deux rationnels.");
+}
+Litteral& Rationnel::operatorDivEntiere(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un rationnel.");
+}
+
+/*** MODULO ***/
+Litteral& Rationnel::operator%(const Litteral& l) const{
+    try {
+        return l%*this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Rationnel::operator%(const Entier& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un entier et un rationnel.");
+}
+
+Litteral& Rationnel::operator%(const Reel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un reel et un rationnel.");
+}
+Litteral& Rationnel::operator%(const Rationnel& l) const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre deux rationnels.");
+}
+Litteral& Rationnel::operator%(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un rationnel.");
+}
+
+/*** OPERATEUR $ ***/
+Litteral& Rationnel::operator$(const Litteral& l) const{
+    try {
+        return l.operator$(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Rationnel::operator$(const Entier& l)  const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+
+Litteral& Rationnel::operator$(const Reel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+
+}
+Litteral& Rationnel::operator$(const Rationnel& l) const{
+    return LitteralManager::getInstance().addComplexe(*l.clone(), *this->clone());
+}
+Litteral& Rationnel::operator$(const Complexe& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+
+
+
+/*** OPERATEUR EGAL ***/
+Entier& Rationnel::operatorEgale(const Litteral& l) const{
+    try {
+        return l.operatorEgale(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Rationnel::operatorEgale(const Entier& l)  const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operatorEgale(const Reel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operatorEgale(const Rationnel& l) const{
+    if(l.getValue() == getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operatorEgale(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un rationnel et un complexe.");
+}
+
+/*** OPERATEUR <= ***/
+Entier& Rationnel::operator<=(const Litteral& l) const{
+    try {
+        return l <= *this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Rationnel::operator<=(const Entier& l)  const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operator<=(const Reel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operator<=(const Rationnel& l) const{
+    if(l.getValue() <= getValue())
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+}
+Entier& Rationnel::operator<=(const Complexe& l) const{
+    throw UTComputerException("Impossible de comparer un rationnel et un complexe.");
+}
+/*******************************************************************/
+/********************** OPERATIONS A PARTIR D'UN COMPLEXE ************/
+/*******************************************************************/
+
+/*** + ***/
+Litteral& Complexe::operator+(const Litteral & l) const {
+    return l + *this;
+}
+Litteral& Complexe::operator+(const Entier& l) const {
+    //le + nous retourne un nouvel objet donc on est fine
+    //on clone car on remove dans la stratégie
+    return LitteralManager::getInstance().addComplexe(getReelle()+l,*getImaginaire().clone());
+}
+Litteral& Complexe::operator+(const Reel & l)  const {
+    return LitteralManager::getInstance().addComplexe(getReelle()+l,*getImaginaire().clone());
+}
+Litteral& Complexe::operator+(const Rationnel & l) const {
+    return LitteralManager::getInstance().addComplexe(getReelle()+l,*getImaginaire().clone());
+}
+Litteral& Complexe::operator+(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()+getReelle(),l.getImaginaire()+getImaginaire());
+}
+
+
+/*** - ***/
+Litteral& Complexe::operator-(const Litteral & l) const {
+    return l - *this;
+}
+Litteral& Complexe::operator-(const Entier& l) const {
+    return LitteralManager::getInstance().addComplexe(l-getReelle(),*getImaginaire().clone());
+}
+Litteral& Complexe::operator-(const Reel & l)  const {
+    return LitteralManager::getInstance().addComplexe(l-getReelle(),*getImaginaire().clone());
+}
+Litteral& Complexe::operator-(const Rationnel & l) const {
+    return LitteralManager::getInstance().addComplexe(l-getReelle(),*getImaginaire().clone());
+}
+Litteral& Complexe::operator-(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe(l.getReelle()-getReelle(),l.getImaginaire()-getImaginaire());
+}
+
+/*** * ***/
+Litteral& Complexe::operator*(const Litteral & l) const {
+    return l * *this;
+}
+Litteral& Complexe::operator*(const Entier& l) const {
+    return LitteralManager::getInstance().addComplexe(getReelle()*l,getImaginaire()*l);
+}
+Litteral& Complexe::operator*(const Reel & l)  const {
+    return LitteralManager::getInstance().addComplexe(getReelle()*l,getImaginaire()*l);
+}
+Litteral& Complexe::operator*(const Rationnel & l) const {
+    return LitteralManager::getInstance().addComplexe(getReelle()*l,getImaginaire()*l);
+}
+Litteral& Complexe::operator*(const Complexe & l) const {
+    return LitteralManager::getInstance().addComplexe((l.getReelle()-getReelle())-(l.getImaginaire()*getImaginaire()),(l.getReelle()-getReelle())+(l.getImaginaire()*getImaginaire()));
+}
+
+/*** / ***/
+Litteral& Complexe::operator/(const Litteral & l) const {
+    return l / *this;
+}
+Litteral& Complexe::operator/(const Entier& a) const {
+    Litteral& aP = getReelle();
+    Litteral& bP = getImaginaire();
+    Litteral& reelle = a*aP / (aP*aP + bP*bP);
+    Litteral& nega = a.clone()->operatorNeg();
+    Litteral& imaginaire = nega*bP/(aP*aP + bP *bP);
+    delete &nega;
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+Litteral& Complexe::operator/(const Reel & a)  const {
+    Litteral& aP = getReelle();
+    Litteral& bP = getImaginaire();
+    Litteral& reelle = a*aP / (aP*aP + bP*bP);
+    Litteral& nega = a.clone()->operatorNeg();
+    Litteral& imaginaire = nega*bP/(aP*aP + bP *bP);
+    delete &nega;
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+Litteral& Complexe::operator/(const Rationnel & a) const {
+    Litteral& aP = getReelle();
+    Litteral& bP = getImaginaire();
+    Litteral& reelle = a*aP / (aP*aP + bP*bP);
+    Litteral& nega = a.clone()->operatorNeg();
+    Litteral& imaginaire = nega*bP/(aP*aP + bP *bP);
+    delete &nega;
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+Litteral& Complexe::operator/(const Complexe & l) const {
+    Litteral& a = l.getReelle();
+    Litteral& b = l.getImaginaire();
+    Litteral& aP = getReelle();
+    Litteral& bP = getImaginaire();
+    Litteral& reelle = (a*aP + b*bP) / (aP*aP + bP *bP);
+    Litteral& imaginaire = ((b*aP)-(a*bP))/(aP*aP + bP *bP);
+    //TODO : remove les résultats intermédiaires du litteral manager ? Ils sont stockés mais on s'en sert plus
+    return LitteralManager::getInstance().addComplexe(reelle,imaginaire);
+}
+
+/*** DIVISION ENTIERE ***/
+
+Litteral& Complexe::operatorDivEntiere(const Litteral& l)  const{
+    try {
+        return l.operatorDivEntiere(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }}
+
+Litteral& Complexe::operatorDivEntiere(const Entier& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un entier.");
+}
+
+Litteral& Complexe::operatorDivEntiere(const Reel& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un reel.");
+
+}
+Litteral& Complexe::operatorDivEntiere(const Rationnel& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre un complexe et un rationnel.");
+}
+Litteral& Complexe::operatorDivEntiere(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer DIV entre deux complexes.");
+}
+
+/*** MODULO ***/
+Litteral& Complexe::operator%(const Litteral& l) const{
+    try {
+        return l%*this;
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Complexe::operator%(const Entier& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un entier.");
+}
+
+Litteral& Complexe::operator%(const Reel& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un reel.");
+
+}
+Litteral& Complexe::operator%(const Rationnel& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre un complexe et un rationnel.");
+}
+Litteral& Complexe::operator%(const Complexe& l)  const{
+    throw UTComputerException("Il est impossible d'appliquer MOD entre deux complexes.");
+}
+
+/*** OPERATEUR $ ***/
+Litteral& Complexe::operator$(const Litteral& l) const{
+    try {
+        return l.operator$(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Litteral& Complexe::operator$(const Entier& l)  const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+
+Litteral& Complexe::operator$(const Reel& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+
+}
+Litteral& Complexe::operator$(const Rationnel& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+Litteral& Complexe::operator$(const Complexe& l) const{
+    throw UTComputerException("Impossible de creer un nombre complexe a partir d'un autre nombre complexe.");
+}
+
+/*** OPERATEUR EGAL ***/
+Entier& Complexe::operatorEgale(const Litteral& l) const{
+    try {
+        return l.operatorEgale(*this);
+    } catch (UTComputerException e) {
+        throw UTComputerException(e.what());
+    }
+}
+Entier& Complexe::operatorEgale(const Entier& l)  const{
+    throw UTComputerException("Impossible de comparer un entier et un complexe.");
+
+}
+Entier& Complexe::operatorEgale(const Reel& l) const{
+    throw UTComputerException("Impossible de comparer un reel et un complexe.");
+
+}
+Entier& Complexe::operatorEgale(const Rationnel& l) const{
+    throw UTComputerException("Impossible de comparer un rationnel et un complexe.");
+
+}
+Entier& Complexe::operatorEgale(const Complexe& l) const{
+    if ((l.getReelle().operatorEgale(getReelle()).getValue() == 1) && (l.getReelle().operatorEgale(getReelle()).getValue()) == 1)
+        return LitteralManager::getInstance().addEntier(1);
+    return LitteralManager::getInstance().addEntier(0);
+
+}
+
+/*******************************************************************/
+/************************* OPERATEUR NEG ***************************/
+/*******************************************************************/
+
+Litteral& Entier::operatorNeg()  {
+    value = -value;
+    return *this;
+}
+Litteral& Rationnel::operatorNeg()  {
+    numerateur = -numerateur;
+    return *this;
+}
+Litteral& Reel::operatorNeg()  {
+    value = -value;
+    return *this;
+}
+Litteral& Complexe::operatorNeg()  {
+    getReelle().operatorNeg();
+    return *this;
+}
+
+
+/*******************************************************************/
+/************************* OPERATEUR NUM ***************************/
+/*******************************************************************/
+
+Litteral& Entier::operatorNum() const {
+    return LitteralManager::getInstance().addEntier(getValue());
+}
+Litteral& Rationnel::operatorNum() const {
+    return LitteralManager::getInstance().addEntier(getNumerator());
+}
+Litteral& Reel::operatorNum() const {
+    throw UTComputerException("Il est impossible d'appliquer NUM sur un reel.");
+}
+Litteral& Complexe::operatorNum() const {
+    throw UTComputerException("Il est impossible d'appliquer NUM sur un complexe.");
+}
+
+/*******************************************************************/
+/************************* OPERATEUR DEN ***************************/
+/*******************************************************************/
+
+Litteral& Entier::operatorDen() const {
+    return LitteralManager::getInstance().addEntier(1);
+}
+Litteral& Rationnel::operatorDen() const {
+    return LitteralManager::getInstance().addEntier(getDenominator());
+}
+Litteral& Reel::operatorDen() const {
+    throw UTComputerException("Il est impossible d'appliquer DEN sur un reel.");
+}
+Litteral& Complexe::operatorDen() const {
+    throw UTComputerException("Il est impossible d'appliquer DEN sur un complexe.");
+}
+
+/*******************************************************************/
+/************************* OPERATEUR RE ***************************/
+/*******************************************************************/
+
+Litteral& Entier::operatorRe() const {
+    throw UTComputerException("Partie reelle d'un entier. N'a aucun effet.");
+}
+Litteral& Rationnel::operatorRe() const {
+    throw UTComputerException("Partie reelle d'un rationnel. N'a aucun effet.");
+}
+Litteral& Reel::operatorRe() const {
+    throw UTComputerException("Partie reelle d'un Reel. N'a aucun effet.");
+}
+Litteral& Complexe::operatorRe() const {
+    return LitteralManager::getInstance().addAlreadyExisting(getReelle());
+}
+
+/*******************************************************************/
+/************************* OPERATEUR IM ***************************/
+/*******************************************************************/
+
+Litteral& Entier::operatorIm() const {
+    return LitteralManager::getInstance().addEntier(0);
+}
+Litteral& Rationnel::operatorIm() const {
+    return LitteralManager::getInstance().addEntier(0);
+}
+Litteral& Reel::operatorIm() const {
+    return LitteralManager::getInstance().addEntier(0);
+}
+Litteral& Complexe::operatorIm() const {
+    return LitteralManager::getInstance().addAlreadyExisting(getImaginaire());
+}
+
+
+

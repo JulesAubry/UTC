@@ -1,0 +1,24 @@
+Evaluation atome :
+A est associé à (10 2 +)
+L'utilisateur rentre A
+Est ce que dans la pile :
+10
+2
++
+Ou
+10 2 +
+
+-------------------------------
+
+Détermination de l'atome ?
+si il ne peut pas reconnaitre un atome, il fait quoi exactement ?
+
+-------------------------------
+
+quid des opérateurs entre 2 expressions ? Genre (EXP1)+(EXP2)
+
+-------------------------------
+
+utilisation d'une classe item ?
+
+

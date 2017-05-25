@@ -1,0 +1,134 @@
+#ifndef STRATEGIE_H
+#define STRATEGIE_H
+
+#include "computer.h"
+#include <typeinfo>
+#include <cassert>
+#include <math.h>
+
+class Pile;
+
+/******************************   STRATEGIE *************************/
+class StrategieOperateurs {
+public:
+
+    virtual void execute(Pile& pile) = 0;
+};
+
+class StrategieLitteraux {
+public:
+    virtual void execute(Pile& pile, const QString& s) = 0;
+};
+/*******************************************************************/
+/******************************   STRATEGIES OPERATEURS  *************************/
+class StrategiePlus : public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieMoins : public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieMult : public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieDiv : public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieDivEntiere : public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieNeg: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieMod: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieNum: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieDen: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieDup: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieDrop: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieSwap: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieClear: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieComplexe: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieRe: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieIm: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieEgal: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieNonEgal: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieInfOuEgal: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieSup: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieSupOuEgal: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieInf: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+class StrategieAnd: public StrategieOperateurs {
+public:
+    void execute(Pile& pile);
+};
+/*******************************************************************/
+/******************************   STRATEGIES LITTERAUX  *************************/
+class StrategieEntier : public StrategieLitteraux {
+public:
+    void execute(Pile& pile, const QString& s);
+};
+
+class StrategieReel : public StrategieLitteraux {
+public:
+    void execute(Pile& pile, const QString& s);
+};
+
+class StrategieRationnel : public StrategieLitteraux {
+public:
+    void execute(Pile& pile, const QString& s);
+};
+/*******************************************************************/
+
+#endif // STRATEGIE_H

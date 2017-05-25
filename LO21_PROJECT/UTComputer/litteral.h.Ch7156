@@ -1,0 +1,364 @@
+#ifndef LITTERAL_H
+#define LITTERAL_H
+
+#include <QString>
+#include <QTextStream>
+#include <QObject>
+#include <QDebug>
+#include <iostream>
+#include <operator.h>
+
+class Entier;
+class Rationnel;
+class Reel;
+class Complexe;
+
+class Litteral {
+public:
+    virtual ~Litteral(){}
+    virtual QString toString () const = 0;
+    virtual Litteral& operator+(const Litteral & l) const = 0;
+    virtual Litteral& operator+(const Entier& l) const = 0;
+    virtual Litteral& operator+(const Reel & l)  const = 0;
+    virtual Litteral& operator+(const Rationnel & l) const = 0;
+    virtual Litteral& operator+(const Complexe & l) const = 0;
+    virtual Litteral& operator-(const Litteral & l) const = 0;
+    virtual Litteral& operator-(const Entier& l) const = 0;
+    virtual Litteral& operator-(const Reel & l)  const = 0;
+    virtual Litteral& operator-(const Rationnel & l) const = 0;
+    virtual Litteral& operator-(const Complexe & l) const = 0;
+    virtual Litteral& operator*(const Litteral & l) const = 0;
+    virtual Litteral& operator*(const Entier& l) const = 0;
+    virtual Litteral& operator*(const Reel & l)  const = 0;
+    virtual Litteral& operator*(const Rationnel & l) const = 0;
+    virtual Litteral& operator*(const Complexe & l) const = 0;
+    virtual Litteral& operator/(const Litteral & l) const = 0;
+    virtual Litteral& operator/(const Entier& l) const = 0;
+    virtual Litteral& operator/(const Reel & l)  const = 0;
+    virtual Litteral& operator/(const Rationnel & l) const = 0;
+    virtual Litteral& operator/(const Complexe & l) const = 0;
+    virtual Litteral& operatorNeg()  = 0;
+    virtual Litteral& operatorDivEntiere(const Litteral& l) const = 0;
+    virtual Litteral& operatorDivEntiere(const Entier& l) const = 0;
+    virtual Litteral& operatorDivEntiere(const Reel& l) const = 0;
+    virtual Litteral& operatorDivEntiere(const Rationnel& l) const = 0;
+    virtual Litteral& operatorDivEntiere(const Complexe& l) const = 0;
+    virtual Litteral& operator%(const Litteral & l) const = 0;
+    virtual Litteral& operator%(const Entier& l) const = 0;
+    virtual Litteral& operator%(const Reel & l)  const = 0;
+    virtual Litteral& operator%(const Rationnel & l) const = 0;
+    virtual Litteral& operator%(const Complexe & l) const = 0;
+    virtual Litteral& operatorNum()  const = 0;
+    virtual Litteral& operatorDen()  const = 0;
+    virtual Litteral* clone() const = 0;
+    virtual Litteral& operator$(const Litteral & l) const = 0;
+    virtual Litteral& operator$(const Entier& l) const = 0;
+    virtual Litteral& operator$(const Reel & l)  const = 0;
+    virtual Litteral& operator$(const Rationnel & l) const = 0;
+    virtual Litteral& operator$(const Complexe & l) const = 0;
+    virtual Litteral& operatorRe()  const = 0;
+    virtual Litteral& operatorIm()  const = 0;
+    virtual Litteral& operateurEgale(const Litteral& l) const = 0;
+    virtual Litteral& operateurEgale(const Entier& l) const = 0;
+    virtual Litteral& operateurEgale(const Reel& l) const = 0;
+    virtual Litteral& operateurEgale(const Rationnel& l) const = 0;
+    virtual Litteral& operateurEgale(const Complexe& l) const = 0;
+
+
+};
+
+class Entier : public Litteral {
+    friend class LitteralManager;
+    int value;
+public:
+    Entier(int v) :value(v) {}
+    Entier(const Entier& e) { value = e.getValue(); }
+    virtual QString toString () const;
+    int getValue() const { return value; }
+    Litteral& operator+(const Litteral & l) const;
+    Litteral& operator+(const Entier& l) const;
+    Litteral& operator+(const Reel & l)  const;
+    Litteral& operator+(const Rationnel & l) const;
+    Litteral& operator+(const Complexe & l) const;
+
+    Litteral& operator-(const Litteral & l) const;
+    Litteral& operator-(const Entier& l) const;
+    Litteral& operator-(const Reel & l)  const;
+    Litteral& operator-(const Rationnel & l) const;
+    Litteral& operator-(const Complexe & l) const;
+
+    Litteral& operator*(const Litteral & l) const;
+    Litteral& operator*(const Entier& l) const;
+    Litteral& operator*(const Reel & l)  const;
+    Litteral& operator*(const Rationnel & l) const;
+    Litteral& operator*(const Complexe & l) const;
+
+    Litteral& operator/(const Litteral & l) const;
+    Litteral& operator/(const Entier& l) const;
+    Litteral& operator/(const Reel & l)  const;
+    Litteral& operator/(const Rationnel & l) const;
+    Litteral& operator/(const Complexe & l) const;
+
+    Litteral& operatorNeg() ;
+    Litteral& operatorDivEntiere(const Litteral& l) const;
+    Litteral& operatorDivEntiere(const Entier& l) const;
+    Litteral& operatorDivEntiere(const Reel& l) const;
+    Litteral& operatorDivEntiere(const Rationnel& l) const;
+    Litteral& operatorDivEntiere(const Complexe& l) const;
+
+    Litteral& operator%(const Litteral & l) const;
+    Litteral& operator%(const Entier& l) const;
+    Litteral& operator%(const Reel & l)  const;
+    Litteral& operator%(const Rationnel & l) const;
+    Litteral& operator%(const Complexe & l) const;
+
+    Litteral& operatorNum()  const;
+    Litteral& operatorDen()  const;
+    Litteral* clone() const { return new Entier(*this); }
+    Litteral& operator$(const Litteral & l) const;
+    Litteral& operator$(const Entier& l) const;
+    Litteral& operator$(const Reel & l)  const;
+    Litteral& operator$(const Rationnel & l) const;
+    Litteral& operator$(const Complexe & l) const;
+    Litteral& operatorRe()  const;
+    Litteral& operatorIm()  const;
+
+    Litteral& operatorEgale(const Litteral& l) const;
+    Litteral& operatorEgale(const Entier& l) const;
+    Litteral& operatorEgale(const Reel& l) const;
+    Litteral& operatorEgale(const Rationnel& l) const;
+    Litteral& operatorEgal(const Complexe& l) const;
+
+
+};
+
+class Rationnel : public Litteral {
+    friend class LitteralManager;
+    int numerateur;
+    int denominateur;
+public:
+    Rationnel(int n, int d) :numerateur(n), denominateur(d) {}
+    Rationnel(const Rationnel& e) {
+        numerateur = e.getNumerator();
+        denominateur = e.getDenominator();
+    };
+    QString toString() const;
+    //static_cast pour forcer le résultat en double, sinon le résultat est tronqué partie entière
+    double getValue() const {return static_cast<double>(numerateur)/denominateur; }
+    double getNumerator() const { return numerateur; }
+    double getDenominator() const { return denominateur; }
+    Litteral& operator+(const Litteral & l) const;
+    Litteral& operator+(const Entier& l) const;
+    Litteral& operator+(const Reel & l)  const;
+    Litteral& operator+(const Rationnel & l) const;
+    Litteral& operator+(const Complexe & l) const;
+
+    Litteral& operator-(const Litteral & l) const;
+    Litteral& operator-(const Entier& l) const;
+    Litteral& operator-(const Reel & l)  const;
+    Litteral& operator-(const Rationnel & l) const;
+    Litteral& operator-(const Complexe & l) const;
+
+    Litteral& operator*(const Litteral & l) const;
+    Litteral& operator*(const Entier& l) const;
+    Litteral& operator*(const Reel & l)  const;
+    Litteral& operator*(const Rationnel & l) const;
+    Litteral& operator*(const Complexe & l) const;
+
+    Litteral& operator/(const Litteral & l) const;
+    Litteral& operator/(const Entier& l) const;
+    Litteral& operator/(const Reel & l)  const;
+    Litteral& operator/(const Rationnel & l) const;
+    Litteral& operator/(const Complexe & l) const;
+
+    Litteral& operatorNeg() ;
+    Litteral& operatorDivEntiere(const Litteral& l) const;
+    Litteral& operatorDivEntiere(const Entier& l) const;
+    Litteral& operatorDivEntiere(const Reel& l) const;
+    Litteral& operatorDivEntiere(const Rationnel& l)  const;
+    Litteral& operatorDivEntiere(const Complexe& l)  const;
+
+    Litteral& operator%(const Litteral & l) const;
+    Litteral& operator%(const Entier& l) const;
+    Litteral& operator%(const Reel & l)  const;
+    Litteral& operator%(const Rationnel & l) const;
+    Litteral& operator%(const Complexe & l) const;
+
+    Litteral& operatorNum()  const;
+    Litteral& operatorDen()  const;
+    Litteral* clone() const { return new Rationnel(*this); }
+    Litteral& operator$(const Litteral & l) const;
+    Litteral& operator$(const Entier& l) const;
+    Litteral& operator$(const Reel & l)  const;
+    Litteral& operator$(const Rationnel & l) const;
+    Litteral& operator$(const Complexe & l) const;
+    Litteral& operatorRe()  const;
+    Litteral& operatorIm()  const;
+
+    Litteral& operatorEgale(const Litteral& l) const;
+    Litteral& operatorEgale(const Entier& l) const;
+    Litteral& operatorEgale(const Reel& l) const;
+    Litteral& operatorEgale(const Rationnel& l) const;
+    Litteral& operatorEgale(const Complexe& l) const;
+
+
+
+};
+
+class Reel : public Litteral {
+    friend class LitteralManager;
+    double value;
+public:
+    Reel(double v) :value(v) {}
+    Reel(const Reel& e) {
+        value = e.getValue();
+    };
+    double getValue() const { return value; }
+    QString toString() const;
+    Litteral& operator+(const Litteral & l) const;
+    Litteral& operator+(const Entier& l) const;
+    Litteral& operator+(const Reel & l)  const;
+    Litteral& operator+(const Rationnel & l) const;
+    Litteral& operator+(const Complexe & l) const;
+
+    Litteral& operator-(const Litteral & l) const;
+    Litteral& operator-(const Entier& l) const;
+    Litteral& operator-(const Reel & l)  const;
+    Litteral& operator-(const Rationnel & l) const;
+    Litteral& operator-(const Complexe & l) const;
+
+    Litteral& operator*(const Litteral & l) const;
+    Litteral& operator*(const Entier& l) const;
+    Litteral& operator*(const Reel & l)  const;
+    Litteral& operator*(const Rationnel & l) const;
+    Litteral& operator*(const Complexe & l) const;
+
+    Litteral& operator/(const Litteral & l) const;
+    Litteral& operator/(const Entier& l) const;
+    Litteral& operator/(const Reel & l)  const;
+    Litteral& operator/(const Rationnel & l) const;
+    Litteral& operator/(const Complexe & l) const;
+
+    Litteral& operatorNeg() ;
+    Litteral& operatorDivEntiere(const Litteral& l) const;
+    Litteral& operatorDivEntiere(const Entier& l) const;
+    Litteral& operatorDivEntiere(const Reel& l) const;
+    Litteral& operatorDivEntiere(const Rationnel& l)  const;
+    Litteral& operatorDivEntiere(const Complexe& l)  const;
+
+    Litteral& operator%(const Litteral & l) const;
+    Litteral& operator%(const Entier& l) const;
+    Litteral& operator%(const Reel & l)  const;
+    Litteral& operator%(const Rationnel & l) const;
+    Litteral& operator%(const Complexe & l) const;
+
+    Litteral& operatorNum()  const;
+    Litteral& operatorDen()  const;
+    Litteral* clone() const { return new Reel(*this); }
+    Litteral& operator$(const Litteral & l) const;
+    Litteral& operator$(const Entier& l) const;
+    Litteral& operator$(const Reel & l)  const;
+    Litteral& operator$(const Rationnel & l) const;
+    Litteral& operator$(const Complexe & l) const;
+    Litteral& operatorRe()  const;
+    Litteral& operatorIm()  const;
+
+    Litteral& operatorEgale(const Litteral& l) const;
+    Litteral& operatorEgale(const Entier& l) const;
+    Litteral& operatorEgale(const Reel& l) const;
+    Litteral& operatorEgale(const Rationnel& l) const;
+    Litteral& operatorEgale(const Complexe& l) const;
+
+
+
+};
+
+class Complexe : public Litteral {
+    friend class LitteralManager;
+    Litteral* partieReelle;
+    Litteral* partieImaginaire;
+public:
+    Complexe(Litteral& _partieRelle, Litteral& _partieImaginaire) : partieReelle(&_partieRelle),partieImaginaire(&_partieImaginaire) {}
+    Complexe(const Complexe& e) {
+        partieReelle = e.partieReelle->clone();
+        partieImaginaire = e.partieImaginaire->clone();
+    };
+    ~Complexe() { delete partieReelle; delete partieImaginaire;}
+    Litteral& getReelle() const { return *partieReelle; }
+    Litteral& getImaginaire()  const { return *partieImaginaire; }
+    QString toString() const;
+    Litteral& operator+(const Litteral & l) const;
+    Litteral& operator+(const Entier& l) const;
+    Litteral& operator+(const Reel & l)  const;
+    Litteral& operator+(const Rationnel & l) const;
+    Litteral& operator+(const Complexe & l) const;
+
+    Litteral& operator-(const Litteral & l) const;
+    Litteral& operator-(const Entier& l) const;
+    Litteral& operator-(const Reel & l)  const;
+    Litteral& operator-(const Rationnel & l) const;
+    Litteral& operator-(const Complexe & l) const;
+
+    Litteral& operator*(const Litteral & l) const;
+    Litteral& operator*(const Entier& l) const;
+    Litteral& operator*(const Reel & l)  const;
+    Litteral& operator*(const Rationnel & l) const;
+    Litteral& operator*(const Complexe & l) const;
+
+    Litteral& operator/(const Litteral & l) const;
+    Litteral& operator/(const Entier& l) const;
+    Litteral& operator/(const Reel & l)  const;
+    Litteral& operator/(const Rationnel & l) const;
+    Litteral& operator/(const Complexe & l) const;
+
+    Litteral& operatorNeg() ;
+
+    Litteral& operatorDivEntiere(const Litteral& l) const;
+    Litteral& operatorDivEntiere(const Entier& l) const;
+    Litteral& operatorDivEntiere(const Reel& l) const;
+    Litteral& operatorDivEntiere(const Rationnel& l)  const;
+    Litteral& operatorDivEntiere(const Complexe& l)  const;
+
+    Litteral& operator%(const Litteral & l) const;
+    Litteral& operator%(const Entier& l) const;
+    Litteral& operator%(const Reel & l)  const;
+    Litteral& operator%(const Rationnel & l) const;
+    Litteral& operator%(const Complexe & l) const;
+
+    Litteral& operatorNum()  const;
+    Litteral& operatorDen()  const;
+    Litteral* clone() const { return new Complexe(*this); }
+
+    Litteral& operator$(const Litteral & l) const;
+    Litteral& operator$(const Entier& l) const;
+    Litteral& operator$(const Reel & l)  const;
+    Litteral& operator$(const Rationnel & l) const;
+    Litteral& operator$(const Complexe & l) const;
+    Litteral& operatorRe()  const;
+    Litteral& operatorIm()  const;
+
+    Litteral& operatorEgale(const Litteral& l) const;
+    Litteral& operatorEgale(const Entier& l) const;
+    Litteral& operatorEgale(const Reel& l) const;
+    Litteral& operatorEgale(const Rationnel& l) const;
+    Litteral& operatorEgale(const Complexe& l) const;
+
+
+};
+
+/*
+class Atome  : public Litteral{
+
+
+};
+
+class Programme : public Litteral {
+
+
+};*/
+
+
+
+
+
+#endif // LITTERAL_H
