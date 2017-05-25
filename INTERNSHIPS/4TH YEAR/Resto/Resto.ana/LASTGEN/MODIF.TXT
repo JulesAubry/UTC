@@ -1,0 +1,2 @@
+//MO006-007.TXT ANA00006 TO ANA00007
+TypeRestau	Libelle	CLEU*		la rubrique Libelle est maintenant une clé

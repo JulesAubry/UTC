@@ -1,0 +1,3 @@
+//MO004-005.TXT ANA00004 TO ANA00005
+Restaurants		TAR	174	nouvelle taille enregistrement : 174
+Restaurants	Ville	RUB+		Ville est une nouvelle rubrique

@@ -1,0 +1,5 @@
+//MO003-004.TXT ANA00003 TO ANA00004
+TypeRestau		NFI		nouveau fichier
+Restaurants	Type	CLEN*		la rubrique Type est maintenant une clé
+TypeRestau		NWL	TypeRestau (IDTypeRestau) et Restaurants (Type)	Nouvelle liaison entre les fichiers TypeRestau (IDTypeRestau) et Restaurants (Type)
+TypeRestau		FRN		

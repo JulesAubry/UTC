@@ -1,0 +1,5 @@
+//MO005-006.TXT ANA00005 TO ANA00006
+Votes		TAR	30	nouvelle taille enregistrement : 30
+Votes	Date	RUB+		Date est une nouvelle rubrique
+Users		TAR	170	nouvelle taille enregistrement : 170
+Users	Password	RUB+		Password est une nouvelle rubrique

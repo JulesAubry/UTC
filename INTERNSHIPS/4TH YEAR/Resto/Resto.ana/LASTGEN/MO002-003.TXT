@@ -1,0 +1,6 @@
+//MO002-003.TXT ANA00002 TO ANA00003
+Votes		FCNX+	Connexion au serveur 10.0.4.210, base Resto	
+Roles		FCNX+	Connexion au serveur 10.0.4.210, base Resto	
+Restaurants		FCNX+	Connexion au serveur 10.0.4.210, base Resto	
+Users		FCNX+	Connexion au serveur 10.0.4.210, base Resto	
+Connexion au serveur 10.0.4.210, base Resto		CNX+		

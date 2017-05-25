@@ -1,0 +1,4 @@
+//MO000-001.TXT ANA00000 TO ANA00001
+Users		NFI		nouveau fichier
+Connexion à HyperFileSQL Client/Serveur		CNX+		
+Users		FRN		

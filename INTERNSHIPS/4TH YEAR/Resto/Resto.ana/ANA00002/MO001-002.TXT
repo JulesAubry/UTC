@@ -1,0 +1,15 @@
+//MO001-002.TXT ANA00001 TO ANA00002
+Votes		NFI		nouveau fichier
+Roles		NFI		nouveau fichier
+Restaurants		NFI		nouveau fichier
+Users		TAR	119	nouvelle taille enregistrement : 119
+Users		FCNX-	Connexion à HyperFileSQL Client/Serveur	
+Users	Nom	RUB+		Nom est une nouvelle rubrique
+Users	Prenom	RUB+		Prenom est une nouvelle rubrique
+Users	Role	RUB+		Role est une nouvelle clé
+Users		NWL	Users (IDUsers) et Votes (fkUser)	Nouvelle liaison entre les fichiers Users (IDUsers) et Votes (fkUser)
+Restaurants		NWL	Restaurants (IDRestaurants) et Votes (FkRestaurant)	Nouvelle liaison entre les fichiers Restaurants (IDRestaurants) et Votes (FkRestaurant)
+Roles		NWL	Roles (IDRoles) et Users (Role)	Nouvelle liaison entre les fichiers Roles (IDRoles) et Users (Role)
+Restaurants		FRN		
+Roles		FRN		
+Votes		FRN		

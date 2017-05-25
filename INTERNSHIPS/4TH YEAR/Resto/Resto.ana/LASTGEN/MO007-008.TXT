@@ -1,0 +1,2 @@
+//MO007-008.TXT ANA00007 TO ANA00008
+Restaurants	Libelle	CLEU*		la rubrique Libelle est maintenant une clé
