@@ -1,0 +1,33 @@
+﻿<Window x:Class="Microsoft.Samples.Kinect.SkeletonBasics.Configurations"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Microsoft.Samples.Kinect.SkeletonBasics"
+        mc:Ignorable="d"
+        Title="Configurations" Height="514.764" Width="439.555" ShowActivated="False">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="213*"/>
+            <ColumnDefinition Width="40*"/>
+            <ColumnDefinition Width="170*"/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+        <CheckBox x:Name="activateSound" Content="Activer le son" HorizontalAlignment="Left" Margin="33,18,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="91"/>
+        <CheckBox x:Name="activateColour" Content="Activer la couleur" HorizontalAlignment="Left" Margin="154,18,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.533,2.344" IsChecked="True" Height="15" Width="112" Grid.ColumnSpan="3"/>
+        <CheckBox x:Name="activateGIF" Content="Activer le GIF" HorizontalAlignment="Left" Margin="186,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.465,3.708" IsChecked="True" Height="15" Width="89" Grid.ColumnSpan="3">
+            <CheckBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="0.565"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </CheckBox.RenderTransform>
+        </CheckBox>
+        <CheckBox x:Name="activateSmartphone" Content="Activer le smartphone" HorizontalAlignment="Left" Margin="33,18,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="136" Grid.Column="2"/>
+        <MediaElement x:Name="mediaElementSound" HorizontalAlignment="Left" Height="54" Margin="33,49,0,0" VerticalAlignment="Top" Width="70" MediaEnded="mediaElementSound_Ended" UnloadedBehavior="Manual" Source="C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\Ressources\base.mp3" LoadedBehavior="Manual" Stretch="None" />
+        <MediaElement x:Name="mediaElementGIF" HorizontalAlignment="Left" Height="383" Margin="33,108,0,0" VerticalAlignment="Top" Width="383" MediaEnded="mediaElementGIF_Ended" UnloadedBehavior="Manual" Source="C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\Ressources\runningmangif.mp4" LoadedBehavior="Manual" Stretch="None" RenderTransformOrigin="1.128,-0.565" Grid.ColumnSpan="3"/>
+
+    </Grid>
+</Window>

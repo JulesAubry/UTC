@@ -6,10 +6,12 @@
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
+    using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Media;
     using Microsoft.Kinect;
+
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -81,12 +83,24 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>
         private DrawingImage imageSource;
 
+        public bool activateSound { get; set; }
+        public bool activateGIF { get; set; }
+        public bool activateColour { get; set; }
+        public bool activateSmartphone { get; set; }
+
+        private Window windowConfigurations;
+
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+           //TODO : communiquer entre les deux fenetres
+           //TODO : faire que la nouvelle fenetre soit la fille de la mainWindow
+           // windowConfigurations.
+
         }
 
         /// <summary>
@@ -136,6 +150,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="e">event arguments</param>
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            initilizeChildWindow();
+
             // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
 
@@ -183,6 +199,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
+        private void initilizeChildWindow()
+        {
+            windowConfigurations = new Configurations() { Owner = this };
+            ((Configurations)windowConfigurations).activateCheckBoxes();
+            ((Configurations)windowConfigurations).setAllTrue();
+            ((Configurations)windowConfigurations).playAll();
+            windowConfigurations.Show();
+        }
+
         /// <summary>
         /// Execute shutdown tasks
         /// </summary>
@@ -219,8 +244,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 //TODO : RAJOUTER LE CODE DE NOTRE APPLICATION
 
-                // Draw a transparent background to set the render size
-                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                // Draw a transparent background to set the render size              
+
+                int nbPeopleOnScreen = 0;
+                foreach (Skeleton skel in skeletons)
+                {
+                    if (skel.TrackingState != SkeletonTrackingState.NotTracked)
+                    {
+                        nbPeopleOnScreen += 1;
+                    }
+                }
+
+                ManageBehaviour(dc, nbPeopleOnScreen);
 
                 if (skeletons.Length != 0)
                 {
@@ -243,9 +278,86 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         }
                     }
                 }
-
                 // prevent drawing outside of our render area
                 this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+            }
+        }
+
+        private void ManageBehaviour(DrawingContext dc, int nbTracked)
+        {
+            //Vérifier si telle ou telle fonction est activée.
+            switch (nbTracked) {
+                case 1:
+                    ManageColour(dc, Brushes.White);
+                    ManageSound(1);
+                    ManageGIF(1);
+                    break;
+                case 2:
+                    ManageColour(dc, Brushes.LightBlue);
+                    ManageSound(1.3);
+                    ManageGIF(1.5);
+                    break;
+                case 3:
+                    ManageColour(dc, Brushes.SkyBlue);
+                    ManageSound(1.6);
+                    ManageGIF(2);
+                    break;
+                case 4:
+                    ManageColour(dc, Brushes.DeepSkyBlue);
+                    ManageSound(2);
+                    ManageGIF(2.5);
+                    break;
+                case 5:
+                    ManageColour(dc, Brushes.DodgerBlue);
+                    ManageSound(2.1);
+                    ManageGIF(3);
+                    break;
+                case 6:
+                    ManageColour(dc, Brushes.MediumBlue);
+                    ManageSound(2.2);
+                    ManageGIF(3.5);
+                    break;
+                default:
+                    ManageColour(dc, Brushes.Black);
+                    ManageSound(1);
+                    ManageGIF(1);
+                    break;
+           }
+        }
+
+        private void ManageSound(double tempo)
+        {
+            if(activateSound)
+            {
+                ((Configurations)windowConfigurations).changeRatioSound(tempo);
+            }
+            else
+            {
+                ((Configurations)windowConfigurations).changeRatioSound(0);
+            }
+        }
+
+        private void ManageGIF(double rate)
+        {
+            if (activateGIF)
+            {
+                ((Configurations)windowConfigurations).changeRatioGIF(rate);
+            }
+            else
+            {
+                ((Configurations)windowConfigurations).changeRatioGIF(0);
+            }
+        }
+
+        private void ManageColour(DrawingContext dc, Brush colour)
+        {
+            if(activateColour)
+            {
+                dc.DrawRectangle(colour, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+            }
+            else
+            { 
+                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
             }
         }
 
