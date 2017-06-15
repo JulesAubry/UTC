@@ -86,7 +86,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public bool activateSound { get; set; }
         public bool activateGIF { get; set; }
         public bool activateColour { get; set; }
-        public bool activateSmartphone { get; set; }
 
         private Window windowConfigurations;
 
@@ -204,7 +203,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             windowConfigurations = new Configurations() { Owner = this };
             ((Configurations)windowConfigurations).activateCheckBoxes();
             ((Configurations)windowConfigurations).setAllTrue();
-            ((Configurations)windowConfigurations).playAll();
+            //((Configurations)windowConfigurations).playAll();
             windowConfigurations.Show();
         }
 
@@ -255,6 +254,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     }
                 }
 
+                LabelNumberTracked.Content = "Nombre de personnes trackées : " + nbPeopleOnScreen;
                 ManageBehaviour(dc, nbPeopleOnScreen);
 
                 if (skeletons.Length != 0)
@@ -319,8 +319,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     break;
                 default:
                     ManageColour(dc, Brushes.Black);
-                    ManageSound(1);
-                    ManageGIF(1);
+                    ManageSound(0);
+                    ManageGIF(0);
                     break;
            }
         }

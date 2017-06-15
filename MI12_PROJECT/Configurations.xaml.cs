@@ -37,8 +37,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             activateColour.Unchecked += CheckBoxChanged;
             activateGIF.Checked += CheckBoxChanged;
             activateGIF.Unchecked += CheckBoxChanged;
-            activateSmartphone.Checked += CheckBoxChanged;
-            activateSmartphone.Unchecked += CheckBoxChanged;
         }
 
         public void setAllTrue()
@@ -46,7 +44,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             ((MainWindow)this.Owner).activateSound = true;
             ((MainWindow)this.Owner).activateColour = true;
             ((MainWindow)this.Owner).activateGIF = true;
-            ((MainWindow)this.Owner).activateSmartphone = true;
         }
 
         private void CheckBoxChanged(object sender, RoutedEventArgs e)
@@ -63,9 +60,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 case "activateGIF":
                     ((MainWindow)this.Owner).activateGIF = check.IsChecked.Value;
                     break;
-                case "activateSmartphone":
-                    ((MainWindow)this.Owner).activateSmartphone = check.IsChecked.Value;
-                    break;
             }
         }
 
@@ -79,7 +73,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             double ratio = mediaElementGIF.SpeedRatio;
             mediaElementGIF.Position = TimeSpan.Zero;
-            mediaElementGIF.Play();
+            //mediaElementGIF.Play();
             mediaElementGIF.SpeedRatio = ratio;
         }
 
@@ -90,12 +84,20 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         }
 
         public void changeRatioSound(double value)
-        {
+        {   
+            if(mediaElementSound.Position == TimeSpan.Zero)
+            {
+                mediaElementSound.Play();
+            }
             mediaElementSound.SpeedRatio = value;
         }
 
         public void changeRatioGIF(double value)
         {
+            if (mediaElementGIF.Position == TimeSpan.Zero)
+            {
+                mediaElementGIF.Play();
+            }
             mediaElementGIF.SpeedRatio = value;
         }
     }

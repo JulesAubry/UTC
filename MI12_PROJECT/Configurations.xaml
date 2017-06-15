@@ -15,7 +15,7 @@
         </Grid.ColumnDefinitions>
         <CheckBox x:Name="activateSound" Content="Activer le son" HorizontalAlignment="Left" Margin="33,18,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="91"/>
         <CheckBox x:Name="activateColour" Content="Activer la couleur" HorizontalAlignment="Left" Margin="154,18,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.533,2.344" IsChecked="True" Height="15" Width="112" Grid.ColumnSpan="3"/>
-        <CheckBox x:Name="activateGIF" Content="Activer le GIF" HorizontalAlignment="Left" Margin="186,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.465,3.708" IsChecked="True" Height="15" Width="89" Grid.ColumnSpan="3">
+        <CheckBox x:Name="activateGIF" Content="Activer le GIF" HorizontalAlignment="Left" Margin="39,19,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.465,3.708" IsChecked="True" Height="15" Width="89" Grid.Column="2">
             <CheckBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -25,8 +25,7 @@
                 </TransformGroup>
             </CheckBox.RenderTransform>
         </CheckBox>
-        <CheckBox x:Name="activateSmartphone" Content="Activer le smartphone" HorizontalAlignment="Left" Margin="33,18,0,0" VerticalAlignment="Top" IsChecked="True" Height="15" Width="136" Grid.Column="2"/>
-        <MediaElement x:Name="mediaElementSound" HorizontalAlignment="Left" Height="54" Margin="33,49,0,0" VerticalAlignment="Top" Width="70" MediaEnded="mediaElementSound_Ended" UnloadedBehavior="Manual" Source="C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\Ressources\base.mp3" LoadedBehavior="Manual" Stretch="None" />
+        <MediaElement x:Name="mediaElementSound" HorizontalAlignment="Left" Height="54" Margin="178,49,0,0" VerticalAlignment="Top" Width="70" MediaEnded="mediaElementSound_Ended" UnloadedBehavior="Manual" Source="C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\Ressources\base.mp3" LoadedBehavior="Manual" Stretch="None" Grid.ColumnSpan="2" />
         <MediaElement x:Name="mediaElementGIF" HorizontalAlignment="Left" Height="383" Margin="33,108,0,0" VerticalAlignment="Top" Width="383" MediaEnded="mediaElementGIF_Ended" UnloadedBehavior="Manual" Source="C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\Ressources\runningmangif.mp4" LoadedBehavior="Manual" Stretch="None" RenderTransformOrigin="1.128,-0.565" Grid.ColumnSpan="3"/>
 
     </Grid>
