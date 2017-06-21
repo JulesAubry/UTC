@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Microsoft.Samples.Kinect.SkeletonBasics.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Skeleton Basics" Height="735" Width="770" Loaded="WindowLoaded" Closing="WindowClosing">
+        Title="Fenêtre principale" Height="735" Width="770" Loaded="WindowLoaded" Closing="WindowClosing">
 
     <Window.Resources>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e"/>
@@ -55,18 +55,19 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0" Margin="0 0 0 20">
             <Image DockPanel.Dock="Left" Source="Images\Logo.png" Stretch="Fill" Height="32" Width="81" Margin="0 10 0 5"/>
-            <TextBlock DockPanel.Dock="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18">Skeleton Basics</TextBlock>
+            <TextBlock DockPanel.Dock="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18">Analyse d'ambiance par traitement d'image</TextBlock>
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
             <Label x:Name="LabelNumberTracked" Content="Nombre de personnes trackées : 0" HorizontalAlignment="Center" Width="205" Margin="0,23,0,0"/>
         </DockPanel>
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center">
             <Image Name="Image" Width="640" Height="480"/>
         </Viewbox>
-        <CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged"/>
+        <CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged" Visibility="Hidden"/>
         <StatusBar Grid.Row="3" HorizontalAlignment="Stretch" Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
             <StatusBarItem Padding="0 0 0 10">
-                <TextBlock Name="statusBarText" Margin="-1 0 0 0">Click 'Seated' to change skeletal pipeline type!</TextBlock>
+                <TextBlock Name="statusBarText" Margin="-1 0 0 0">Recherche de la KINECT</TextBlock>
             </StatusBarItem>
         </StatusBar>
+        <Label x:Name="label" Content="AUBRY Jules&#xD;&#xA;CHICHE Thibault" HorizontalAlignment="Left" Margin="628,8,0,0" Grid.Row="3" VerticalAlignment="Top" Width="104"/>
     </Grid>
 </Window>

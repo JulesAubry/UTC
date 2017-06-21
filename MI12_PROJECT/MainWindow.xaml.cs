@@ -196,6 +196,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 this.statusBarText.Text = Properties.Resources.NoKinectReady;
             }
+            else
+            {
+                this.statusBarText.Text = Properties.Resources.KinectReady;
+            }
         }
 
         private void initilizeChildWindow()

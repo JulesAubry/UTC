@@ -66,15 +66,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private void mediaElementSound_Ended(object sender, RoutedEventArgs e)
         {
             mediaElementSound.Position = TimeSpan.Zero;
-            mediaElementSound.Play();
         }
 
         private void mediaElementGIF_Ended(object sender, EventArgs e)
         {
-            double ratio = mediaElementGIF.SpeedRatio;
             mediaElementGIF.Position = TimeSpan.Zero;
-            //mediaElementGIF.Play();
-            mediaElementGIF.SpeedRatio = ratio;
         }
 
         public void playAll()

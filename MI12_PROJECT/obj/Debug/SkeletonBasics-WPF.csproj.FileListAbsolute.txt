@@ -14,4 +14,3 @@ C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\obj\Debu
 C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
 C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.exe
 C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.pdb
-C:\Users\Jules\Documents\Visual Studio 2017\Projects\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache

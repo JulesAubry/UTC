@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Microsoft.Samples.Kinect.SkeletonBasics"
         mc:Ignorable="d"
-        Title="Configurations" Height="514.764" Width="439.555" ShowActivated="False">
+        Title="Fenêtre de configuration" Height="514.764" Width="439.555" ShowActivated="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="213*"/>
